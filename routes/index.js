@@ -1,14 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-
-async function validateToken(token){
-  try {
-    return await jwt.verify(token, 'this_is_secret_key');
-  }catch (e){
-    return null;
-  }
-}
+const {validateToken} = require('../controller/user');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -16,8 +8,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/home', async function(req,res){
-  const valid = await validateToken(req.cookies.token);
-  if(!valid){
+  const payload = await validateToken(req.cookies.token);
+  if(!payload){
     return res.send("please login");
   }
   return res.send("welcome");
