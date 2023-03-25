@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  Id            String          @id @unique @default(uuid())
+  email         String          @unique
+  username      String
+  password      String
+  role          Role            @relation(fields: [roleId], references: [Id])
+  roleId        Int
+  Ulasan        Ulasan[]
+  KedaiProfile  KedaiProfile?
+  CommentUlasan CommentUlasan[]
+}
+
+model Role {
+  Id   Int    @id @default(autoincrement())
+  role String
+  User User[]
+}
+
+model KedaiProfile {
+  Id          String      @id @unique
+  user        User        @relation(fields: [Id], references: [Id])
+  description String?
+  KedaiMenu   KedaiMenu[]
+}
+
+model KedaiMenu {
+  Id          Int
+  kedai       KedaiProfile @relation(fields: [kedaiId], references: [Id])
+  kedaiId     String
+  thumbnail   String?
+  description String
+  Ulasan      Ulasan[]
+
+  @@id([Id, kedaiId])
+}
+
+model Ulasan {
+  Id            Int
+  kedaiMenu     KedaiMenu       @relation(fields: [kedaiMenuId, kedaiId], references: [Id, kedaiId])
+  kedaiMenuId   Int
+  kedaiId       String
+  value         Int
+  comment       String
+  CommentUlasan CommentUlasan[]
+  userId        String
+  user          User            @relation(fields: [userId], references: [Id])
+
+  @@id([Id, kedaiMenuId, kedaiId])
+}
+
+model CommentUlasan {
+  Id          Int
+  ulasan      Ulasan @relation(fields: [ulasanId, kedaiId, kedaiMenuId], references: [Id, kedaiId, kedaiMenuId])
+  ulasanId    Int
+  kedaiMenuId Int
+  kedaiId     String
+  userId      String
+  user        User   @relation(fields: [userId], references: [Id])
+
+  @@id([Id, ulasanId, kedaiMenuId, kedaiId])
+}
