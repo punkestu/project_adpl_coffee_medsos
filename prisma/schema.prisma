@@ -24,7 +24,7 @@ model User {
 
 model Role {
   Id   Int    @id @default(autoincrement())
-  role String
+  role String @unique
   User User[]
 }
 
