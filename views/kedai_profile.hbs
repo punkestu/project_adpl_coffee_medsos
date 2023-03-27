@@ -1,0 +1,11 @@
+{{#with kedai}}
+<h1>{{user.username}}</h1>
+<pre>{{description}}</pre>
+<h2>Alamat</h2>
+<div>
+    jl. {{KedaiAlamat.jalan}}, {{KedaiAlamat.kecamatan}}, {{KedaiAlamat.kota}}
+    {{#if KedaiAlamat.longitude}}
+        <a href="https://maps.google.com/?q={{KedaiAlamat.latitude}},{{KedaiAlamat.longitude}}">Google maps</a>
+    {{/if}}
+</div>
+{{/with}}
