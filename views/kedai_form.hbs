@@ -1,0 +1,36 @@
+<form {{#ifEq method "create"}}
+action="/kedai"
+method="post"
+{{else ifEq method "update"}}
+action="/kedai/profile"
+method="post"
+{{/ifEq}}>
+    <div>
+        <label for="deskripsi">Deskripsi</label>
+        <br>
+        <textarea name="deskripsi" id="deskripsi" cols="30" rows="10">{{dumpIfExist kedai.description}}</textarea>
+    </div>
+    <label for="">Alamat</label>
+    <div>
+        <label for="jalan">Jalan</label>
+        <br>
+        <input type="text" name="jalan" id="jalan" value="{{dumpIfExist kedai.KedaiAlamat.jalan}}">
+    </div>
+    <div>
+        <label for="kecamatan">Kecamatan</label>
+        <br>
+        <input type="text" name="kecamatan" id="kecamatan" value="{{dumpIfExist kedai.KedaiAlamat.kecamatan}}">
+    </div>
+    <div>
+        <label for="kota">Kota</label>
+        <br>
+        <input type="text" name="kota" id="kota" value="{{dumpIfExist kedai.KedaiAlamat.kota}}">
+    </div>
+    <button type="submit">
+        {{#ifEq method "create"}}
+            Buat kedai
+        {{else ifEq method "update"}}
+            Ubah kedai
+        {{/ifEq}}
+    </button>
+</form>

@@ -29,10 +29,21 @@ model Role {
 }
 
 model KedaiProfile {
-  Id          String      @id @unique
-  user        User        @relation(fields: [Id], references: [Id])
+  Id          String       @id @unique
+  user        User         @relation(fields: [Id], references: [Id])
   description String?
   KedaiMenu   KedaiMenu[]
+  KedaiAlamat KedaiAlamat?
+}
+
+model KedaiAlamat {
+  kedai     KedaiProfile @relation(fields: [kedaiId], references: [Id])
+  kedaiId   String       @id @unique
+  jalan     String
+  kecamatan String
+  kota      String
+  latitude  Float?
+  longitude Float?
 }
 
 model KedaiMenu {
@@ -66,6 +77,7 @@ model CommentUlasan {
   ulasanId    Int
   kedaiMenuId Int
   kedaiId     String
+  komentar    String
   userId      String
   user        User   @relation(fields: [userId], references: [Id])
 
