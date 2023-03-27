@@ -1,5 +1,6 @@
 const { user } = require("../prisma/db");
 const jwt = require("jsonwebtoken");
+const {validationResult} = require("express-validator");
 
 const tools = {
     validateToken: async function (token) {
@@ -17,29 +18,25 @@ const tools = {
 module.exports = {
     validateToken: tools.validateToken,
     login: async function (req, res, next) {
+        req.errors = validationResult(req);
+        if(req.errors){
+            const context = tools.signToken({data: req.body, errors: req.errors.mapped()});
+            return res.redirect("/login?context="+context);
+        }
         try {
-            const User = await user.findFirst({
-                where: {
-                  email: req.body.email,
-                },
-            });
-            req.errors = { user: "", password: "" };
-            if (User == null) {
-                req.errors.user = "User not found";
-            } else {
-                if (User.password == req.body.password) {
-                  req.token = tools.signToken(User);
-                } else {
-                  req.errors.password = "Wrong Password";
-                }
-            }
-            return next();
+            req.token = tools.signToken(req.user);
+            next();
         } catch (e) {
             console.log(e);
             return res.sendStatus(400);
         }
     },
     register: async function (req, res, next) {
+        req.errors = validationResult(req);
+        if(req.errors){
+            const context = tools.signToken({data: req.body, errors: req.errors.mapped()});
+            return res.redirect("/register?context="+context);
+        }
         try {
             const result = await user.create({
                 data: {
