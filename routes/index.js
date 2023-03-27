@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {validateToken} = require('../controller/user');
 const midKedai = require("../middleware/kedai");
+const {isNotAuth} = require("../middleware/user");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -16,12 +17,20 @@ router.get('/home', async function(req,res){
   return res.send("welcome");
 });
 
-router.get('/register', function (req, res){
-  res.render('register', {errors: req.error});
+router.get('/register', isNotAuth, async function (req, res){
+  if(req.query.context){
+    const context = await validateToken(req.query.context);
+    return res.render('register', {errors: context.errors, data: context.data});
+  }
+  return res.render('register');
 });
 
-router.get('/login', function (req,res){
-  res.render('login', {errors: req.error});
+router.get('/login', isNotAuth, async function (req,res){
+  if(req.query.context){
+    const context = await validateToken(req.query.context);
+    return res.render('login', {errors: context.errors, data: context.data});
+  }
+  return res.render('login');
 });
 
 router.get('/logout', function(req,res){
